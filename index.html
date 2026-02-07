@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wagon to Wonder Racer</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="game-shell">
+      <header>
+        <h1>Wagon to Wonder Racer</h1>
+        <p>
+          Start in a dusty old wagon and earn upgrades by keeping your driving
+          clean. Avoid the cones, stay on the road, and watch your ride level up.
+        </p>
+      </header>
+
+      <section class="hud">
+        <div>
+          <span class="label">Car</span>
+          <span id="carName">Old Wagon</span>
+        </div>
+        <div>
+          <span class="label">Skill</span>
+          <span id="skillValue">0</span>
+        </div>
+        <div>
+          <span class="label">Upgrades</span>
+          <span id="upgradeValue">0</span>
+        </div>
+        <button id="restartBtn">Restart Run</button>
+      </section>
+
+      <main class="game-area">
+        <canvas id="gameCanvas" width="420" height="640"></canvas>
+        <aside>
+          <h2>How to Play</h2>
+          <ul>
+            <li>Use ⬅️ / ➡️ or A / D to steer.</li>
+            <li>Hold ⬆️ or W for a burst of speed.</li>
+            <li>Drive smoothly to build skill.</li>
+            <li>Hitting a cone drops your skill.</li>
+            <li>Every 100 skill points upgrades your car.</li>
+          </ul>
+          <div class="upgrade-card">
+            <h3>Next Upgrade</h3>
+            <p id="nextUpgrade">Rusty Sedan</p>
+            <div class="progress-bar">
+              <span id="upgradeProgress"></span>
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      <footer>
+        <p>Tip: Smooth steering earns more skill and keeps your wagon steady.</p>
+      </footer>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
