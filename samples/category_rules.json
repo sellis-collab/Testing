@@ -1,0 +1,8 @@
+{
+  "rules": [
+    {"category": "Groceries", "contains": ["wholefoods", "market", "grocery"]},
+    {"category": "Income", "contains": ["payroll", "salary"]},
+    {"category": "Transport", "contains": ["uber", "lyft", "transit"]},
+    {"category": "Subscriptions", "contains": ["netflix", "spotify"]}
+  ]
+}
