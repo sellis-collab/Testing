@@ -1,0 +1,53 @@
+# ============================================================
+# Deal Scoring Criteria — Industrial Real Estate
+# All percentage values as decimals (e.g., 0.065 = 6.5%)
+# Lines marked PLACEHOLDER should be updated with your targets.
+# ============================================================
+
+# --- Quantitative Thresholds ---
+min_yield_on_cost: 0.065        # 6.5% minimum yield-on-cost          PLACEHOLDER
+max_acceptable_cap_rate: 0.060  # Reject markets with cap rates above  PLACEHOLDER
+min_spread_bps: 75              # Minimum bps above market cap rate     PLACEHOLDER
+min_irr_levered: 0.15           # 15% levered IRR floor                 PLACEHOLDER
+min_irr_unlevered: 0.09         # 9% unlevered IRR floor                PLACEHOLDER
+min_equity_multiple: 1.8        # 1.8x equity multiple minimum          PLACEHOLDER
+max_ltc: 0.65                   # Maximum 65% LTC/LTV                   PLACEHOLDER
+min_size_sf: 100000             # Minimum 100,000 SF                    PLACEHOLDER
+max_cost_per_sf: 175            # Maximum $175/SF all-in cost           PLACEHOLDER
+
+# --- Market Preferences ---
+preferred_markets:              # PLACEHOLDER — fill with your target markets
+  - "Inland Empire"
+  - "Dallas"
+  - "Phoenix"
+  - "Nashville"
+  - "Columbus"
+
+avoid_markets: []               # PLACEHOLDER — markets to exclude
+
+preferred_tenant_types:
+  - "single-tenant NNN"
+  - "credit tenant"
+  - "e-commerce fulfillment"
+
+# --- Scoring Weights (must sum to 1.0) ---
+weights:
+  yield_on_cost: 0.20
+  irr_levered: 0.20
+  spread: 0.15
+  equity_multiple: 0.15
+  market_preference: 0.10
+  pre_lease_status: 0.10
+  ltc: 0.05
+  size: 0.05
+
+# --- Green Street Integration ---
+gs_min_market_score: "B"        # Minimum Green Street market grade (A, B, C)
+gs_max_vacancy_rate: 0.08       # Maximum 8% vacancy in the submarket
+
+# --- Report Settings ---
+report:
+  company_name: "Clarion Partners"
+  logo_path: ""                 # PLACEHOLDER — path to your logo PNG
+  primary_color: "#1a3a5c"
+  analyst_name: ""              # PLACEHOLDER — your name
