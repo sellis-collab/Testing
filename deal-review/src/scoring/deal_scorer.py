@@ -171,7 +171,7 @@ Key returns:
   Equity multiple: {fmt_num(deal.equity_multiple)}x
   LTC/LTV: {fmt_pct(deal.ltc_ltv)}
 
-Development cost: ${deal.development_cost:,.0f} | Cost/SF: ${deal.cost_per_sf:.0f}/SF
+Development cost: ${f"{deal.development_cost:,.0f}" if deal.development_cost is not None else "N/A"} | Cost/SF: ${f"{deal.cost_per_sf:.0f}" if deal.cost_per_sf is not None else "N/A"}/SF
 Score: {deal.score_total}% → {deal.recommendation}
 Flags: {', '.join(flags) if flags else 'None'}
 """.strip()
