@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find c:/Users/radsei/Downloads c:/Users/radsei/Desktop 'c:/Users/radsei/OneDrive - REST Industry Super/Documents' -name *.pdf)"
+    ]
+  }
+}
