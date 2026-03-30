@@ -72,6 +72,9 @@ def _classify_pdf(name: str) -> tuple:
     if any(kw in name for kw in ("market", "research", "report", "cbre", "jll", "cushman")):
         logger.info("  → MarketDataExtractor (PDF)")
         return MarketDataExtractor(), "market"
+    if any(kw in name for kw in ("model", "uw", "underwrite", "proforma", "pro forma", "pro_forma")):
+        logger.info("  → UnderwritingExtractor (PDF)")
+        return UnderwritingExtractor(), "uw"
     # Default: treat unknown PDFs as brochures
     logger.info("  → BrochureExtractor (PDF, default fallback)")
     return BrochureExtractor(), "brochure"

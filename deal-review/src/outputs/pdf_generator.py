@@ -22,8 +22,6 @@ class PDFGenerator:
         self.env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 
     def generate(self, deal: DealRecord) -> str:
-        from weasyprint import HTML  # deferred import — optional dependency
-
         Path(self.output_dir).mkdir(parents=True, exist_ok=True)
 
         criteria = self.criteria
@@ -50,9 +48,17 @@ class PDFGenerator:
         )
 
         safe_name = (deal.property_name or deal.deal_id or "deal").replace(" ", "_")[:40]
-        filename = f"{deal.deal_id}_{safe_name}_report.pdf"
-        output_path = os.path.join(self.output_dir, filename)
 
-        HTML(string=html_content, base_url=TEMPLATE_DIR).write_pdf(output_path)
-        logger.info(f"PDF report generated: {output_path}")
+        try:
+            from weasyprint import HTML  # optional dependency
+            filename = f"{deal.deal_id}_{safe_name}_report.pdf"
+            output_path = os.path.join(self.output_dir, filename)
+            HTML(string=html_content, base_url=TEMPLATE_DIR).write_pdf(output_path)
+            logger.info(f"PDF report generated: {output_path}")
+        except Exception:
+            filename = f"{deal.deal_id}_{safe_name}_report.html"
+            output_path = os.path.join(self.output_dir, filename)
+            Path(output_path).write_text(html_content, encoding="utf-8")
+            logger.info(f"HTML report saved (open in browser to print as PDF): {output_path}")
+
         return output_path

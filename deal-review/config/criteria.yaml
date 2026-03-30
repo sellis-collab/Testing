@@ -1,49 +1,75 @@
 # ============================================================
-# Deal Scoring Criteria — Industrial Real Estate
+# Deal Scoring Criteria — Industrial Real Estate Development
 # All percentage values as decimals (e.g., 0.065 = 6.5%)
 # Lines marked PLACEHOLDER should be updated with your targets.
 # ============================================================
 
 # --- Quantitative Thresholds ---
-min_yield_on_cost: 0.065        # 6.5% minimum yield-on-cost          PLACEHOLDER
-max_acceptable_cap_rate: 0.060  # Reject markets with cap rates above  PLACEHOLDER
-min_spread_bps: 75              # Minimum bps above market cap rate     PLACEHOLDER
-min_irr_levered: 0.15           # 15% levered IRR floor                 PLACEHOLDER
-min_irr_unlevered: 0.09         # 9% unlevered IRR floor                PLACEHOLDER
-min_equity_multiple: 1.8        # 1.8x equity multiple minimum          PLACEHOLDER
-max_ltc: 0.65                   # Maximum 65% LTC/LTV                   PLACEHOLDER
-min_size_sf: 100000             # Minimum 100,000 SF                    PLACEHOLDER
-max_cost_per_sf: 175            # Maximum $175/SF all-in cost           PLACEHOLDER
+min_yield_on_cost: 0.070        # 7.0% minimum stabilised yield-on-cost (development premium over core)
+min_development_spread_bps: 150 # Minimum 150 bps above exit cap rate (development margin)
+max_exit_cap_rate: 0.055        # Maximum exit/stabilisation cap rate assumption
+min_profit_on_cost: 0.15        # Minimum 15% profit-on-cost (development margin)
+min_irr_levered: 0.18           # 18% levered IRR floor (development risk premium)
+min_irr_unlevered: 0.11         # 11% unlevered IRR floor
+min_equity_multiple: 2.0        # 2.0x equity multiple minimum (reflects development risk)
+max_ltc: 0.65                   # Maximum 65% LTC on construction loan
+min_pre_lease_pct: 0.30         # Minimum 30% pre-leased before construction commencement
+min_size_sf: 150000             # Minimum 150,000 SF (development scale efficiency)
+max_all_in_cost_per_sf: 200     # Maximum $200/SF all-in development cost (land + construction + soft costs)
+max_land_pct_of_total_cost: 0.20 # Land cost should not exceed 20% of total project cost
+max_construction_months: 24     # Maximum 24-month construction period
 
 # --- Market Preferences ---
-preferred_markets:              # PLACEHOLDER — fill with your target markets
+preferred_markets:              # Supply-constrained markets with strong logistics demand
   - "Inland Empire"
   - "Dallas"
   - "Phoenix"
-  - "Nashville"
+  - "New Jersey"
   - "Columbus"
+  - "Chicago"
+  - "Savannah"
 
-avoid_markets: []               # PLACEHOLDER — markets to exclude
+avoid_markets: []               # PLACEHOLDER — markets to exclude (oversupplied or weak fundamentals)
 
-preferred_tenant_types:
-  - "single-tenant NNN"
-  - "credit tenant"
-  - "e-commerce fulfillment"
+preferred_product_types:
+  - "bulk distribution"         # 250,000+ SF cross-dock
+  - "last-mile logistics"       # Infill urban/suburban, smaller bay
+  - "cold storage / temp-controlled"
+  - "e-commerce fulfilment"
+
+preferred_lease_structures:
+  - "NNN development lease"     # Tenant on NNN lease from completion
+  - "pre-leased to credit tenant"
+  - "build-to-suit"
+
+# --- Development-Specific Criteria ---
+development:
+  spec_allowed: true            # Allow speculative (unleased) development if market conditions strong
+  spec_max_size_sf: 500000      # Cap on spec development size
+  min_absorption_months: 6      # Expect to lease up within 6 months of completion
+  preferred_zoning:
+    - "industrial"
+    - "logistics"
+    - "business park"
+  site_coverage_min: 0.45       # Minimum 45% site coverage ratio
+  clear_height_min_ft: 36       # Minimum 36' clear height for bulk product
 
 # --- Scoring Weights (must sum to 1.0) ---
 weights:
-  yield_on_cost: 0.20
+  profit_on_cost: 0.20          # Primary development return metric
   irr_levered: 0.20
-  spread: 0.15
-  equity_multiple: 0.15
+  development_spread: 0.15      # Yield-on-cost vs. exit cap rate spread
+  equity_multiple: 0.10
   market_preference: 0.10
-  pre_lease_status: 0.10
+  pre_lease_status: 0.10        # Higher pre-leasing reduces risk
   ltc: 0.05
   size: 0.05
+  site_quality: 0.05            # Access, zoning, infrastructure
 
 # --- Green Street Integration ---
 gs_min_market_score: "B"        # Minimum Green Street market grade (A, B, C)
-gs_max_vacancy_rate: 0.08       # Maximum 8% vacancy in the submarket
+gs_max_vacancy_rate: 0.07       # Maximum 7% vacancy — tighter threshold for development (demand must be proven)
+gs_min_rent_growth_forecast: 0.03 # Minimum 3% p.a. rent growth forecast to support development economics
 
 # --- Report Settings ---
 report:
