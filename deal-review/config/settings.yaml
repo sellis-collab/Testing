@@ -1,0 +1,17 @@
+storage:
+  inbox_path: "data/inbox"
+  processed_path: "data/processed"
+  output_path: "data/output"
+
+logging:
+  level: "INFO"
+  log_file: "logs/app.log"
+  max_bytes: 10485760   # 10 MB
+  backup_count: 5
+
+claude:
+  model: "claude-opus-4-6"
+  max_tokens_extraction: 4096
+  max_tokens_scoring: 1000
+  max_excel_chars: 50000     # Cap on Excel text sent to Claude
+  max_pdf_bytes: 10485760    # 10 MB — use text fallback above this

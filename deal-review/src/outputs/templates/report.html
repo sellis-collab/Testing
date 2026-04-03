@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  /* ---- Page setup ---- */
+  @page {
+    size: letter;
+    margin: 0.75in 0.75in 0.85in 0.75in;
+    @top-right {
+      content: "{{ company_name }} — Deal Review";
+      font-size: 8pt;
+      color: #666;
+    }
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 8pt;
+      color: #666;
+    }
+    @bottom-left {
+      content: "Generated {{ generated_date }}";
+      font-size: 8pt;
+      color: #666;
+    }
+  }
+
+  /* ---- Base ---- */
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 9.5pt;
+    color: #222;
+    line-height: 1.4;
+  }
+
+  h1 { font-size: 20pt; margin: 0 0 4px 0; }
+  h2 { font-size: 12pt; color: {{ primary_color }}; border-bottom: 1.5px solid {{ primary_color }}; padding-bottom: 3px; margin: 18px 0 10px 0; }
+  h3 { font-size: 10pt; color: #444; margin: 12px 0 6px 0; }
+  p  { margin: 0 0 8px 0; }
+
+  /* ---- Header band ---- */
+  .header-band {
+    background-color: {{ primary_color }};
+    color: white;
+    padding: 18px 20px 14px 20px;
+    margin: -54px -54px 20px -54px;
+  }
+  .header-band h1 { color: white; }
+  .header-meta { font-size: 9pt; opacity: 0.85; margin-top: 4px; }
+
+  /* ---- Recommendation badge ---- */
+  .rec-row { text-align: center; margin: 12px 0 18px 0; }
+  .rec-badge {
+    display: inline-block;
+    font-size: 18pt;
+    font-weight: bold;
+    padding: 8px 36px;
+    border-radius: 6px;
+    color: white;
+    letter-spacing: 2px;
+  }
+  .rec-pursue { background-color: #27ae60; }
+  .rec-watch  { background-color: #e67e22; }
+  .rec-pass   { background-color: #c0392b; }
+
+  /* ---- Score bar ---- */
+  .score-label { font-size: 9pt; color: #555; margin-bottom: 3px; }
+  .score-bar-bg { background: #e0e0e0; height: 10px; border-radius: 5px; margin-bottom: 10px; }
+  .score-bar-fill {
+    height: 10px;
+    border-radius: 5px;
+    background-color: {{ score_color }};
+    width: {{ score_pct_str }};
+  }
+
+  /* ---- Metric grid ---- */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 10px 0;
+  }
+  .metric-box {
+    border: 1px solid #d8d8d8;
+    border-radius: 4px;
+    padding: 9px 11px;
+    background: #f7f8fa;
+  }
+  .metric-label { font-size: 7.5pt; color: #777; text-transform: uppercase; letter-spacing: 0.5px; }
+  .metric-value { font-size: 13pt; font-weight: bold; color: {{ primary_color }}; margin-top: 2px; }
+  .metric-sub   { font-size: 7.5pt; color: #999; }
+
+  /* ---- Flags ---- */
+  .flag {
+    background: #fff8e1;
+    border-left: 3px solid #f0ad4e;
+    padding: 5px 9px;
+    margin: 4px 0;
+    font-size: 8.5pt;
+  }
+
+  /* ---- Two-column detail table ---- */
+  .detail-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+  .detail-table td { padding: 4px 8px; border-bottom: 1px solid #eee; }
+  .detail-table td:first-child { color: #555; width: 42%; }
+  .detail-table td:last-child { font-weight: 600; }
+
+  /* ---- Thesis ---- */
+  .thesis-box {
+    background: #f0f4f9;
+    border-left: 3px solid {{ primary_color }};
+    padding: 10px 14px;
+    font-size: 9pt;
+    line-height: 1.5;
+  }
+
+  /* ---- Score breakdown ---- */
+  .score-row { display: flex; justify-content: space-between; font-size: 8.5pt; margin: 2px 0; }
+  .score-row .metric-name { color: #444; }
+  .score-row .score-val   { font-weight: bold; }
+  .score-pass { color: #27ae60; }
+  .score-fail { color: #c0392b; }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="header-band">
+  <h1>{{ deal.property_name or "Unnamed Property" }}</h1>
+  <div class="header-meta">
+    {{ deal.market }}{% if deal.submarket %}, {{ deal.submarket }}{% endif %}
+    {% if deal.size_sf %} &nbsp;·&nbsp; {{ "{:,.0f}".format(deal.size_sf) }} SF{% endif %}
+    {% if deal.developer_sponsor %} &nbsp;·&nbsp; {{ deal.developer_sponsor }}{% endif %}
+    &nbsp;·&nbsp; Received {{ deal.received_date or generated_date }}
+  </div>
+</div>
+
+<!-- ===== RECOMMENDATION ===== -->
+<div class="rec-row">
+  <span class="rec-badge rec-{{ deal.recommendation | lower }}">
+    {{ deal.recommendation | upper }}
+  </span>
+</div>
+
+<p class="score-label">
+  <strong>Deal Score: {{ deal.score_total }}%</strong>
+</p>
+<div class="score-bar-bg">
+  <div class="score-bar-fill"></div>
+</div>
+
+<!-- ===== KEY METRICS ===== -->
+<h2>Key Metrics</h2>
+<div class="metric-grid">
+
+  <div class="metric-box">
+    <div class="metric-label">Yield-on-Cost</div>
+    <div class="metric-value">
+      {% if deal.yield_on_cost is not none %}{{ "%.2f%%"|format(deal.yield_on_cost * 100) }}{% else %}N/A{% endif %}
+    </div>
+    <div class="metric-sub">Min: {{ "%.1f%%"|format(criteria.min_yield_on_cost * 100) }}</div>
+  </div>
+
+  <div class="metric-box">
+    <div class="metric-label">Market Cap Rate</div>
+    <div class="metric-value">
+      {% if deal.market_cap_rate is not none %}{{ "%.2f%%"|format(deal.market_cap_rate * 100) }}{% else %}N/A{% endif %}
+    </div>
+  </div>
+
+  <div class="metric-box">
+    <div class="metric-label">Spread</div>
+    <div class="metric-value">
+      {% if deal.spread_bps is not none %}{{ "%.0f bps"|format(deal.spread_bps) }}{% else %}N/A{% endif %}
+    </div>
+    <div class="metric-sub">Min: {{ criteria.min_spread_bps|int }} bps</div>
+  </div>
+
+  <div class="metric-box">
+    <div class="metric-label">IRR (Levered)</div>
+    <div class="metric-value">
+      {% if deal.irr_levered is not none %}{{ "%.1f%%"|format(deal.irr_levered * 100) }}{% else %}N/A{% endif %}
+    </div>
+    <div class="metric-sub">Min: {{ "%.0f%%"|format(criteria.min_irr_levered * 100) }}</div>
+  </div>
+
+  <div class="metric-box">
+    <div class="metric-label">Equity Multiple</div>
+    <div class="metric-value">
+      {% if deal.equity_multiple is not none %}{{ "%.2fx"|format(deal.equity_multiple) }}{% else %}N/A{% endif %}
+    </div>
+    <div class="metric-sub">Min: {{ "%.1fx"|format(criteria.min_equity_multiple) }}</div>
+  </div>
+
+  <div class="metric-box">
+    <div class="metric-label">Cost / SF</div>
+    <div class="metric-value">
+      {% if deal.cost_per_sf is not none %}${{ "%.0f"|format(deal.cost_per_sf) }}{% else %}N/A{% endif %}
+    </div>
+    <div class="metric-sub">Max: ${{ criteria.max_cost_per_sf|int }}</div>
+  </div>
+
+</div>
+
+<!-- ===== INVESTMENT THESIS ===== -->
+{% if deal.investment_thesis %}
+<h2>Investment Thesis</h2>
+<div class="thesis-box">{{ deal.investment_thesis }}</div>
+{% endif %}
+
+<!-- ===== FLAGS ===== -->
+{% if deal.score_flags %}
+<h2>Flags &amp; Concerns</h2>
+{% for flag in deal.score_flags %}
+<div class="flag">{{ flag }}</div>
+{% endfor %}
+{% endif %}
+
+<!-- ===== DEAL DETAILS ===== -->
+<h2>Deal Details</h2>
+<table class="detail-table">
+  <tr><td>Property Name</td><td>{{ deal.property_name or "—" }}</td></tr>
+  <tr><td>Address</td><td>{{ deal.address or "—" }}</td></tr>
+  <tr><td>Market / Submarket</td><td>{{ deal.market or "—" }}{% if deal.submarket %} / {{ deal.submarket }}{% endif %}</td></tr>
+  <tr><td>Developer / Sponsor</td><td>{{ deal.developer_sponsor or "—" }}</td></tr>
+  <tr><td>Tenant Type</td><td>{{ deal.tenant_type or "—" }}</td></tr>
+  <tr><td>Pre-Lease Status</td><td>{{ deal.pre_lease_status or "—" }}</td></tr>
+  <tr><td>Building Size</td><td>{% if deal.size_sf %}{{ "{:,.0f}".format(deal.size_sf) }} SF{% else %}—{% endif %}</td></tr>
+  <tr><td>Clear Height</td><td>{% if deal.clear_height_ft %}{{ deal.clear_height_ft }} ft{% else %}—{% endif %}</td></tr>
+  <tr><td>Land Area</td><td>{% if deal.land_acres %}{{ deal.land_acres }} acres{% else %}—{% endif %}</td></tr>
+  <tr><td>Number of Buildings</td><td>{{ deal.num_buildings or "—" }}</td></tr>
+  <tr><td>Construction Start</td><td>{{ deal.construction_start or "—" }}</td></tr>
+  <tr><td>Stabilization Date</td><td>{{ deal.stabilization_date or "—" }}</td></tr>
+  <tr><td>Hold Period</td><td>{% if deal.hold_period_years %}{{ deal.hold_period_years }} years{% else %}—{% endif %}</td></tr>
+</table>
+
+<!-- ===== FINANCIAL DETAILS ===== -->
+<h2>Financial Details</h2>
+<table class="detail-table">
+  <tr><td>Total Development Cost</td><td>{% if deal.development_cost %}${{ "{:,.0f}".format(deal.development_cost) }}{% else %}—{% endif %}</td></tr>
+  <tr><td>Cost per SF</td><td>{% if deal.cost_per_sf %}${{ "%.2f"|format(deal.cost_per_sf) }}/SF{% else %}—{% endif %}</td></tr>
+  <tr><td>Investment / Equity Amount</td><td>{% if deal.investment_amount %}${{ "{:,.0f}".format(deal.investment_amount) }}{% else %}—{% endif %}</td></tr>
+  <tr><td>LTC / LTV</td><td>{% if deal.ltc_ltv %}{{ "%.1f%%"|format(deal.ltc_ltv * 100) }}{% else %}—{% endif %}</td></tr>
+  <tr><td>Projected NNN Rent / SF</td><td>{% if deal.projected_rent_nnn_sf %}${{ "%.2f"|format(deal.projected_rent_nnn_sf) }}/SF/yr{% else %}—{% endif %}</td></tr>
+  <tr><td>Yield-on-Cost</td><td>{% if deal.yield_on_cost %}{{ "%.2f%%"|format(deal.yield_on_cost * 100) }}{% else %}—{% endif %}</td></tr>
+  <tr><td>Market Cap Rate</td><td>{% if deal.market_cap_rate %}{{ "%.2f%%"|format(deal.market_cap_rate * 100) }}{% else %}—{% endif %}</td></tr>
+  <tr><td>Spread</td><td>{% if deal.spread_bps %}{{ "%.0f"|format(deal.spread_bps) }} bps{% else %}—{% endif %}</td></tr>
+  <tr><td>IRR (Levered)</td><td>{% if deal.irr_levered %}{{ "%.1f%%"|format(deal.irr_levered * 100) }}{% else %}—{% endif %}</td></tr>
+  <tr><td>IRR (Unlevered)</td><td>{% if deal.irr_unlevered %}{{ "%.1f%%"|format(deal.irr_unlevered * 100) }}{% else %}—{% endif %}</td></tr>
+  <tr><td>Equity Multiple</td><td>{% if deal.equity_multiple %}{{ "%.2f"|format(deal.equity_multiple) }}x{% else %}—{% endif %}</td></tr>
+</table>
+
+<!-- ===== GREEN STREET ===== -->
+{% if deal.gs_market_score or deal.gs_market_rent_growth or deal.gs_vacancy_rate %}
+<h2>Green Street Market Data</h2>
+<table class="detail-table">
+  {% if deal.gs_market_score %}<tr><td>Market Score</td><td>{{ deal.gs_market_score }}</td></tr>{% endif %}
+  {% if deal.gs_market_rent_growth is not none %}<tr><td>Rent Growth (projected)</td><td>{{ "%.1f%%"|format(deal.gs_market_rent_growth * 100) }}</td></tr>{% endif %}
+  {% if deal.gs_vacancy_rate is not none %}<tr><td>Market Vacancy</td><td>{{ "%.1f%%"|format(deal.gs_vacancy_rate * 100) }}</td></tr>{% endif %}
+</table>
+{% endif %}
+
+<!-- ===== SCORING BREAKDOWN ===== -->
+<h2>Scoring Breakdown</h2>
+{% for metric, weight in deal.score_breakdown.items() %}
+<div class="score-row">
+  <span class="metric-name">{{ metric | replace("_", " ") | title }}</span>
+  <span class="score-val {% if weight > 0 %}score-pass{% else %}score-fail{% endif %}">
+    {% if weight > 0 %}PASS{% else %}FAIL{% endif %}
+  </span>
+</div>
+{% endfor %}
+
+<!-- ===== EXTRACTION NOTES ===== -->
+{% if deal.extraction_notes %}
+<h2>Extraction Notes</h2>
+{% for note in deal.extraction_notes %}
+<p style="font-size:8pt; color:#666;">{{ note }}</p>
+{% endfor %}
+{% endif %}
+
+</body>
+</html>
