@@ -10,6 +10,12 @@ from ..scoring.criteria_loader import ScoringCriteria
 
 logger = logging.getLogger(__name__)
 
+try:
+    from weasyprint import HTML as WeasyHTML
+    _WEASYPRINT_AVAILABLE = True
+except ImportError:
+    _WEASYPRINT_AVAILABLE = False
+
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
 DEFAULT_OUTPUT_DIR = "data/output"
 
@@ -49,13 +55,12 @@ class PDFGenerator:
 
         safe_name = (deal.property_name or deal.deal_id or "deal").replace(" ", "_")[:40]
 
-        try:
-            from weasyprint import HTML  # optional dependency
+        if _WEASYPRINT_AVAILABLE:
             filename = f"{deal.deal_id}_{safe_name}_report.pdf"
             output_path = os.path.join(self.output_dir, filename)
-            HTML(string=html_content, base_url=TEMPLATE_DIR).write_pdf(output_path)
+            WeasyHTML(string=html_content, base_url=TEMPLATE_DIR).write_pdf(output_path)
             logger.info(f"PDF report generated: {output_path}")
-        except Exception:
+        else:
             filename = f"{deal.deal_id}_{safe_name}_report.html"
             output_path = os.path.join(self.output_dir, filename)
             Path(output_path).write_text(html_content, encoding="utf-8")

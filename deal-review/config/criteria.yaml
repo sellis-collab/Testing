@@ -56,15 +56,14 @@ development:
 
 # --- Scoring Weights (must sum to 1.0) ---
 weights:
-  profit_on_cost: 0.20          # Primary development return metric
+  yield_on_cost: 0.20           # Stabilised yield-on-cost (primary development return metric)
   irr_levered: 0.20
-  development_spread: 0.15      # Yield-on-cost vs. exit cap rate spread
-  equity_multiple: 0.10
+  spread: 0.15                  # Yield-on-cost vs. exit cap rate spread
+  equity_multiple: 0.15         # Equity multiple (includes site quality / access premium)
   market_preference: 0.10
-  pre_lease_status: 0.10        # Higher pre-leasing reduces risk
+  pre_lease_status: 0.10        # Higher pre-leasing reduces development risk
   ltc: 0.05
   size: 0.05
-  site_quality: 0.05            # Access, zoning, infrastructure
 
 # --- Green Street Integration ---
 gs_min_market_score: "B"        # Minimum Green Street market grade (A, B, C)

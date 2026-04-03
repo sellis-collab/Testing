@@ -19,6 +19,8 @@ IMAGE_MEDIA_TYPES = {
     "webp": "image/webp",
 }
 
+UW_KEYWORDS = ("model", "uw", "underwrite", "proforma", "pro forma", "pro_forma")
+
 
 def classify_and_extract(file_path: str) -> tuple[dict, str]:
     """
@@ -72,7 +74,7 @@ def _classify_pdf(name: str) -> tuple:
     if any(kw in name for kw in ("market", "research", "report", "cbre", "jll", "cushman")):
         logger.info("  → MarketDataExtractor (PDF)")
         return MarketDataExtractor(), "market"
-    if any(kw in name for kw in ("model", "uw", "underwrite", "proforma", "pro forma", "pro_forma")):
+    if any(kw in name for kw in UW_KEYWORDS):
         logger.info("  → UnderwritingExtractor (PDF)")
         return UnderwritingExtractor(), "uw"
     # Default: treat unknown PDFs as brochures
@@ -84,7 +86,7 @@ def _classify_excel(name: str, content: bytes) -> tuple:
     if any(kw in name for kw in ("green", "gs ", "greenstreet", "green_street")):
         logger.info("  → GreenStreetExtractor (Excel)")
         return GreenStreetExtractor(), "green_street"
-    if any(kw in name for kw in ("model", "uw", "underwrite", "proforma", "pro forma", "pro_forma")):
+    if any(kw in name for kw in UW_KEYWORDS):
         logger.info("  → UnderwritingExtractor (Excel)")
         return UnderwritingExtractor(), "uw"
     if any(kw in name for kw in ("market", "research", "report")):
